@@ -67,7 +67,7 @@ void momentumBiasValidation(TString variable = "eta", TString path = "/scratch/h
   Double_t startbin = 0.; Double_t lastbin = 0.;
   if(binVar == "track_eta"){
     // tracks beyond abs(eta)=1.65 do not have radii > 99cm (cut value).
-    startbin = -1.65; lastbin = 1.65; numberOfBins = 18;// ~ outermost TEC
+    startbin = -1.65; lastbin = 1.65; numberOfBins = 14;// ~ outermost TEC
     //startbin = -.917; lastbin = .917; numberOfBins = 10;// ~ outermost TOB
     //startbin = -1.28; lastbin = 1.28; numberOfBins = 14;// ~ innermost TOB
   }
@@ -85,7 +85,7 @@ void momentumBiasValidation(TString variable = "eta", TString path = "/scratch/h
 
   // create energy binning
   Int_t startStep = 0;
-  const Int_t NumberOFSteps = 2;Double_t steparray[NumberOFSteps+1] = {50,58,80};//data 2 steps
+  const Int_t NumberOFSteps = 2;Double_t steparray[NumberOFSteps+1] = {1,10,30};//data 2 steps
   //const Int_t NumberOFSteps = 6;Double_t steparray[NumberOFSteps+1] = {50,55,60,65,70,75,80};//mc 6 steps
 
   vector<Double_t> steps;
@@ -227,8 +227,8 @@ void momentumBiasValidation(TString variable = "eta", TString path = "/scratch/h
 	  Double_t lowcut = binningstrvec[i];
 	  Double_t highcut = binningstrvec[i+1];
 	  // track selection
-	  if(track->track_nHits>=13 && track->track_nLostHits==0 && track->track_outerRadius>99. && track->track_normalizedChi2<5. && 
-	     track->track_EnergyIn<1. && track->track_EnergyOut<8. && track->track_hac3>lowerEcut && track->track_hac3<upperEcut){
+	  if(track->track_nHits>=3 && track->track_nLostHits==0 && track->track_outerRadius>5. && track->track_normalizedChi2<60. && 
+	     track->track_EnergyIn<10. && track->track_EnergyOut<15. && track->track_hac3>lowerEcut && track->track_hac3<upperEcut){
 	    if(binVar == "track_eta"){
 	      if(track->track_eta>=lowcut && track->track_eta<highcut){
 		usedtracks++;
@@ -505,7 +505,7 @@ void momentumBiasValidation(TString variable = "eta", TString path = "/scratch/h
   }
   leg->Draw();
 
-  TPaveLabel *CMSlabel = new TPaveLabel(0.13, 0.94, 0.5, 1., "CMS preliminary 2012", "br NDC");
+  TPaveLabel *CMSlabel = new TPaveLabel(0.13, 0.94, 0.5, 1., "CMS preliminary 2021", "br NDC");
   CMSlabel->SetFillStyle(0);
   CMSlabel->SetBorderSize(0);
   CMSlabel->SetTextSize(0.95);

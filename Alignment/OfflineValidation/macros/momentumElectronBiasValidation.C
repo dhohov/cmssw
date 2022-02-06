@@ -208,9 +208,9 @@ void momentumBiasValidation(TString  variable,
 
     // Initializing the range in Energy
     histo.eRange.clear();
-    histo.eRange.push_back(30);
+    histo.eRange.push_back(10);
     histo.eRange.push_back(40);
-    histo.eRange.push_back(60);
+    histo.eRange.push_back(100);
     //histo.eRange.push_back(100);
 
     // Dump at screen range Energy
@@ -225,10 +225,10 @@ void momentumBiasValidation(TString  variable,
     // Initializing the range in Phi
     if (mode==TRACK_ETA)
     {
-      Double_t begin   = -0.9;//-1.40;//-1.65; 
-      Double_t end     = 0.9;//1.40;//1.65;
+      Double_t begin   = -1.9;//-1.40;//-1.65; 
+      Double_t end     = 1.9;//1.40;//1.65;
       //      UInt_t   nsteps  = 18;
-      UInt_t   nsteps  = 11;//8;
+      UInt_t   nsteps  = 8;//8 11;
       Double_t binsize = (end-begin)/static_cast<Float_t>(nsteps);
 
       histo.etaRange.resize(nsteps+1,0.);
@@ -886,7 +886,7 @@ void ReadTree(ModeType mode, TString variable, HistoType& histo,
             
     Mass = sqrt(Mass);
 
-    if(Mass < 110. && Mass > 70. ) MzTag = true;
+    if(Mass < 150. && Mass > 30. ) MzTag = true; //110 70
 
     // Z mass window
     if(!MzTag) continue;
@@ -903,24 +903,24 @@ void ReadTree(ModeType mode, TString variable, HistoType& histo,
 
     // Isolation against charged particles
     SumPt->Fill(track->SumPtIn05/track->pt);
-    if ( !track->NoTrackIn0015 || (track->SumPtIn05/track->pt) > 0.05 )continue;
+    if ( !track->NoTrackIn0015 || (track->SumPtIn05/track->pt) > 0.05 )continue; //0.05
     cut_ChargedIso->Fill(0.5);
 
     // Ecal energy deposit
     Ecal->Fill(track->SC_energy);
-    if (track->SC_energy < 30.) continue;
+    if (track->SC_energy < 30.) continue; //30
     cut_Ecal->Fill(0.5);
 
     // Hcal over Ecal energy deposit
     HoverE->Fill(track->HcalEnergyIn03/track->SC_energy);
-    if (track->HcalEnergyIn03/track->SC_energy > 0.06) continue; // before: > 0.08
+    if (track->HcalEnergyIn03/track->SC_energy > 0.3) continue; // before: > 0.08
     cut_HoverE->Fill(0.5);
 
     // Track-SuperCluster matching radius
     distTo1stSC->Fill(track->dRto1stSC) ;  
     if (track->dRto1stSC > 0.05) continue;
     distTo2ndSC->Fill(track->dRto2ndSC) ;
-    if(track->dRto2ndSC < 0.25 ) continue;//min=0.09(1st SC)
+    if(track->dRto2ndSC < 0.25 ) continue;//min=0.09(1st SC) 0.25
     cut_NeutralIso->Fill(0.5);
 
     // a high number of valid hits 
@@ -932,7 +932,7 @@ void ReadTree(ModeType mode, TString variable, HistoType& histo,
     cut_nLostHits->Fill(0.5);
 
     // outerRadius
-    //if (track->outerRadius<=99.) continue;
+    if (track->outerRadius<=99.) continue;
     cut_outerRadius->Fill(0.5);
 
     // good chi2 value
@@ -941,13 +941,13 @@ void ReadTree(ModeType mode, TString variable, HistoType& histo,
 
     // less than 10% bremmstrahlung radiated energy
     fbrem->Fill(track->fbrem);
-    if(track->fbrem > 0.10  ||  track->fbrem < -0.10) continue;
+    if(track->fbrem > 0.80  ||  track->fbrem < -0.80) continue;
     cut_fbrem->Fill(0.5);
 
     // only tracks with associated SuperCluster composed of ONE BasicCluster
-    nBasicClus->Fill(track->SC_nBasicClus);
-    if(track->SC_nBasicClus != 1) continue;
-    cut_nCluster->Fill(0.5);
+   // nBasicClus->Fill(track->SC_nBasicClus);
+   // if(track->SC_nBasicClus != 1) continue;
+   // cut_nCluster->Fill(0.5);
 
     }
 
@@ -972,23 +972,23 @@ void ReadTree(ModeType mode, TString variable, HistoType& histo,
 
     // Ecal energy deposit
     Ecal->Fill(track->SC_energy);
-    if (track->SC_energy < 25.) continue;
+    if (track->SC_energy < 25.) continue; //25
     cut_Ecal->Fill(0.5);
 
     // Hcal over Ecal energy deposit
     HoverE->Fill(track->HcalEnergyIn03/track->SC_energy);
-    if (track->HcalEnergyIn03/track->SC_energy > 0.06) continue; // before: > 0.08
+    if (track->HcalEnergyIn03/track->SC_energy > 0.40) continue; // before: > 0.08
     cut_HoverE->Fill(0.5);
 
     // Track-SuperCluster matching radius
     distTo1stSC->Fill(track->dRto1stSC) ;  
-    if (track->dRto1stSC > 0.04) continue;
+    if (track->dRto1stSC > 0.1) continue;
     distTo2ndSC->Fill(track->dRto2ndSC) ;
     if(track->dRto2ndSC < 0.35 ) continue;//min=0.09(1st SC)
     cut_NeutralIso->Fill(0.5);
 
     // a high number of valid hits 
-    if (track->nHits< 13) continue;
+    if (track->nHits< 20) continue;//13
     cut_nHits->Fill(0.5);
 
     // no lost hits
@@ -996,22 +996,22 @@ void ReadTree(ModeType mode, TString variable, HistoType& histo,
     cut_nLostHits->Fill(0.5);
     
     // outerRadius
-    if (track->outerRadius<=99.) continue;
+    if (track->outerRadius<=59.) continue; //99
     cut_outerRadius->Fill(0.5);
     
     // good chi2 value
-     if (track->normalizedChi2>=5.) continue;
+     if (track->normalizedChi2>=25.) continue;//5
     cut_normalizedChi2->Fill(0.5);
 
     // less than 10% bremmstrahlung radiated energy
     fbrem->Fill(track->fbrem);
-    if(track->fbrem > 0.1  ||  track->fbrem < -0.1) continue;
+    if(track->fbrem > 0.8 ||  track->fbrem < -0.8) continue;  // 0.1
     cut_fbrem->Fill(0.5);
 
     // only tracks with associated SuperCluster composed of ONE BasicCluster
-    nBasicClus->Fill(track->SC_nBasicClus);
-    if(track->SC_nBasicClus != 1) continue;
-    cut_nCluster->Fill(0.5);
+    //nBasicClus->Fill(track->SC_nBasicClus);
+    //if(track->SC_nBasicClus != 1) continue;
+    //cut_nCluster->Fill(0.5);
     }
 
     PhiWidthVSnBC->Fill(track->SC_nBasicClus, track->SC_phiWidth);
